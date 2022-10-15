@@ -1,8 +1,10 @@
 <script setup>
-    import { ref, reactive } from 'vue';
-    import { useRouter } from 'vue-router';
+    import { ref, reactive, onMounted} from 'vue';
+    import useProduct from '../composables/useProduct';
+    import useCategory from '../composables/useCategory';
     
-    const router = useRouter()
+    const { addProduct, cancelActions } = useProduct();
+    const { getCategories } = useCategory();
     const data = reactive({
         nombre: '',
         precio: 0,
@@ -12,35 +14,23 @@
         vencimiento: '',
         imagen: '',
         categoria: '',
-    });
-    
-    const addProduct = async () => {
-        await fetch('https://backend-testing-production.up.railway.app/api/products', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(data)
-        })
-        .then(res => {
-            if (res.ok) { 
-                router.push({
-                    name: 'list-products'
-                })
-            }
-        })
-    }
-    </script>
+    })
+    const categories = ref([]);
+
+    onMounted(async () => {
+        categories.value = await getCategories();
+        console.log(categories.value);
+    })
+</script>
     
     
     
     <template>
         <section class="section__adduser">
-    
             <div class="categorys">
                 <span class="categorys__title">Nuevo producto</span>
             </div>
-            <form class="form" @submit.prevent="addProduct">
+            <form class="form" @submit.prevent="addProduct(data)">
                 <div class="form__inputs">
                     <div class="input__item">
                         <label for="name">Nombre <span>*</span></label>
@@ -71,12 +61,26 @@
                         <input type="text" name="imagen" placeholder="URL de imagen del producto" v-model="data.imagen" >
                     </div>
                     <div class="input__item">
-                        <label for="categoria">Categoría <span>*</span></label>
-                        <input type="text" name="categoria" placeholder="Categoria del producto" v-model="data.categoria" >
+                        <label for="category-select">Categoría <span>*</span></label>
+                        <select 
+                            name="categories" 
+                            id="category-select"
+                            v-model="data.categoria"
+                        >
+                            <option value="" disabled selected>Seleccione una categoría</option>
+                            <option
+                                v-for="category in categories"
+                                :key="category._id"
+                                :value="category._id"
+                            >
+                                {{ category.name }}
+                            </option>
+                        </select>
+                        <!-- <input type="text" name="categoria" placeholder="Categoria del producto" v-model="data.categoria" > -->
                     </div>
                 </div>
                 <div class="form__actions">
-                    <button class="action__cancel" @click="router.push({name: 'list-products'})">
+                    <button class="action__cancel" @click.prevent="cancelActions">
                         Cancelar
                     </button>
                     <button type="submit" class="action__save">
@@ -173,5 +177,12 @@
         padding: 10px 24px;
         border-radius: 8px;
         cursor: pointer;
+    }
+    select {
+        padding: 16px 16px;
+        border: 1px solid var(--text-inactive);
+        border-radius: 8px;
+        width: 32rem;
+        font-weight: 400;
     }
     </style>
