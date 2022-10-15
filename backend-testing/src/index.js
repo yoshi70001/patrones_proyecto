@@ -47,7 +47,7 @@ app.get('/', (req, res) => {
 });
 
 // mongodb conection
-mongoose.connect(process.env.MONGODB_URI || "mongodb://ugcivm0jgqoomkxbebi5:IsJJT3j19EKXBSxc0lLI@n1-c2-mongodb-clevercloud-customers.services.clever-cloud.com:27017,n2-c2-mongodb-clevercloud-customers.services.clever-cloud.com:27017/bmh1owwpizzrjpv?replicaSet=rs0")
+mongoose.connect(process.env.MONGODB_URI)
     .then(() => console.log('Conectado a MongoDB Atlas'))
     .catch(err => console.error(err));
 
