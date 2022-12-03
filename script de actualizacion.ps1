@@ -1,6 +1,6 @@
-cd backend-testing
+cd Farmacia_App_BanckEnd
 git pull
 cd ..
-cd medical-frontend
+cd Farmacia_App_frontEnd
 git pull
 cd ..
