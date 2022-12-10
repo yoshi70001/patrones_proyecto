@@ -1,1 +1,0 @@
-# patrones_proyecto
